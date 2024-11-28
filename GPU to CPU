@@ -3,70 +3,41 @@ import easyocr
 import matplotlib.pyplot as plt
 import time
 
-# Define paths
-video_path = 'video.mp4'  # Replace with your video file
-output_path_gpu = 'output_gpu.avi'
-output_path_cpu = 'output_cpu.avi'
+# Initialize EasyOCR reader with CPU (gpu=False)
+reader = easyocr.Reader(['en'], gpu=False)
 
-# Initialize EasyOCR readers
-reader_gpu = easyocr.Reader(['en'], gpu=True)  # GPU-based model
-reader_cpu = easyocr.Reader(['en'], gpu=False)  # CPU-based model
+# Correct path to the image (using raw string or forward slashes)
+image_path = r'C:\Users\palag\Downloads\img.png.png'  # Or use forward slashes: 'C:/Users/YourUsername/img.png'
+frame = cv2.imread(image_path)  # Read the image directly
 
-# Define function for processing video with OCR
-def process_video(reader, video_path, output_path, device_name):
-    cap = cv2.VideoCapture(video_path)
+# Initialize frame count and start time
+frame_count = 1  # Since you're processing a single image
+start_time = time.time()
 
-    # Get video properties
-    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
+# Perform OCR on the image
+results = reader.readtext(frame)
 
-    frame_count = 0
-    start_time = time.time()
+# Annotate the image with OCR results
+for bbox, text, score in results:
+    if score > 0.25:  # Confidence threshold
+        cv2.rectangle(frame, tuple(map(int, bbox[0])), tuple(map(int, bbox[2])), (0, 255, 0), 2)
+        cv2.putText(frame, text, tuple(map(int, bbox[0])), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
+# Calculate elapsed time
+end_time = time.time()
+elapsed_time = end_time - start_time
+fps = frame_count / elapsed_time if elapsed_time > 0 else 0
 
-        # Perform OCR on every frame
-        results = reader.readtext(frame)
+# Display the image with matplotlib
+plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+plt.axis('off')  # Turn off axis
+plt.show()
 
-        # Annotate frame with OCR results
-        for bbox, text, score in results:
-            if score > 0.25:  # Confidence threshold
-                cv2.rectangle(frame, tuple(map(int, bbox[0])), tuple(map(int, bbox[2])), (0, 255, 0), 2)
-                cv2.putText(frame, text, tuple(map(int, bbox[0])), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+# Or display with OpenCV (alternatively)
+# cv2.imshow("Processed Image", frame)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
-        # Write annotated frame to output video
-        out.write(frame)
-
-        frame_count += 1
-
-    cap.release()
-    out.release()
-    end_time = time.time()
-
-    elapsed_time = end_time - start_time
-    processing_fps = frame_count / elapsed_time if elapsed_time > 0 else 0
-
-    print(f"{device_name} Processing Summary:")
-    print(f"Processed {frame_count} frames in {elapsed_time:.2f} seconds.")
-    print(f"FPS: {processing_fps:.2f}\n")
-    return processing_fps
-
-# Process the video with GPU-based OCR
-print("Processing with GPU-based OCR...")
-fps_gpu = process_video(reader_gpu, video_path, output_path_gpu, "GPU")
-
-# Process the video with CPU-based OCR
-print("Processing with CPU-based OCR...")
-fps_cpu = process_video(reader_cpu, video_path, output_path_cpu, "CPU")
-
-# Display Comparative Analysis
-print("Comparative Analysis:")
-print(f"GPU FPS: {fps_gpu:.2f}")
-print(f"CPU FPS: {fps_cpu:.2f}")
-print("Outputs saved as:", output_path_gpu, "and", output_path_cpu)
+# Print processing summary
+print(f"Processed {frame_count} frame in {elapsed_time:.2f} seconds.")
+print(f"FPS: {fps:.2f}")
