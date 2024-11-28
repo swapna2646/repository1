@@ -6,7 +6,7 @@ import time
 reader = easyocr.Reader(['en'], gpu=False)
 
 # Specify the correct path to the video file
-video_path = r'C:\Users\YourUsername\Downloads\video.mp4'  # Replace with your video file path
+video_path = r'video_path'  # Replace with your video file path(like:'C:\Users\palag\Downloads\WhatsApp Video 2024-11-28 at 3.06.16 PM.mp4')
 cap = cv2.VideoCapture(video_path)
 
 # Check if the video file opened successfully
