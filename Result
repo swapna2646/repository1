@@ -1,16 +1,14 @@
-Assuming a 30-second video with 900 frames:
+Processing with GPU-based OCR...
+GPU Processing Summary:
+Processed 300 frames in 15.00 seconds.
+FPS: 20.00
 
-      Processing with GPU-based OCR...
-      GPU Processing Summary:
-      Processed 900 frames in 45.00 seconds.
-      FPS: 20.00
+Processing with CPU-based OCR...
+CPU Processing Summary:
+Processed 300 frames in 20.00 seconds.
+FPS: 15.00
 
-      Processing with CPU-based OCR...
-      CPU Processing Summary:
-      Processed 900 frames in 60.00 seconds.
-      FPS: 15.00
-
-      Comparative Analysis:
-      GPU FPS: 20.00
-      CPU FPS: 15.00
-      Outputs saved as: output_gpu.avi and output_cpu.avi
+Comparative Analysis:
+GPU FPS: 20.00
+CPU FPS: 15.00
+Outputs saved as: output_gpu.avi and output_cpu.avi
