@@ -7,7 +7,7 @@ import time
 reader = easyocr.Reader(['en'], gpu=False)
 
 # Correct path to the image (using raw string or forward slashes)
-image_path = r'C:\Users\palag\Downloads\img.png.png'  # Or use forward slashes: 'C:/Users/YourUsername/img.png'
+image_path = r'image_path'  # Or use forward slashes: 'C:\Users\palag\Downloads\img.png.png'
 frame = cv2.imread(image_path)  # Read the image directly
 
 # Initialize frame count and start time
